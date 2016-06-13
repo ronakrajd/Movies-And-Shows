@@ -10,22 +10,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.view.LayoutInflater;
+
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.GridView;
-import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MoviesActivity extends AppCompatActivity {
 

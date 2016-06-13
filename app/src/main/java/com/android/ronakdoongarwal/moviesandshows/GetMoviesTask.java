@@ -1,8 +1,7 @@
 package com.android.ronakdoongarwal.moviesandshows;
 
-import android.app.Dialog;
+
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -20,7 +19,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.util.concurrent.ExecutionException;
 

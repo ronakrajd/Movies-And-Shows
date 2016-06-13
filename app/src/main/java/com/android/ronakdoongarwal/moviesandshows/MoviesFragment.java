@@ -25,7 +25,7 @@ import com.github.ksoichiro.android.observablescrollview.ScrollState;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
+
 
 public class MoviesFragment extends Fragment implements AdapterView.OnItemSelectedListener, View.OnClickListener, ObservableScrollViewCallbacks {
     private int mImageWidth;
