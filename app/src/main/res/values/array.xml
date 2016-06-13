@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="sort_menu_spinner_list">
+        <item>Popular</item>
+        <item>Top Rated</item>
+        <item>In theatres</item>
+        <item>Coming Soon</item>
+    </string-array>
+    <string-array name="sort_menu_spinner_list2">
+        <item>Popular</item>
+        <item>Top Rated</item>
+    </string-array>
+</resources>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/grid_image_margin"
+    android:padding="@dimen/grid_image_padding">
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_view"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        card_view:cardCornerRadius="2dp"
+        android:layout_margin="6dp"
+        card_view:contentPadding="0dp"
+        card_view:cardElevation="5dp"
+        android:translationZ="5dp">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="5dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:elevation="6dp">
+
+            <ImageView
+                android:id="@+id/movie_poster"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/grid_image_margin"
+                android:padding="@dimen/grid_image_padding"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:elevation="6dp"/>
+
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="3dp"
+                android:layout_marginTop="3dp">
+                <TextView
+                    android:singleLine="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    android:textSize="18dip"
+                    android:text="Rate"
+                    android:paddingLeft="5dp"
+                    android:id="@+id/movie_rating"
+                    android:elevation="6dp"/>
+
+                <RatingBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ratingBar"
+                    android:numStars="10"
+                    android:layout_marginStart="2dp"
+                    android:layout_gravity="center"
+                    style="?attr/ratingBarStyleSmall"
+                    android:layout_marginLeft="2dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:paddingBottom="3dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:singleLine="true"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    android:textSize="18dp"
+                    android:text="Movie Name"
+                    android:id="@+id/movie_title"
+                    android:elevation="6dp"/>
+
+                <ImageView
+                    android:id="@+id/popup_button"
+                    android:layout_width="26dip"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/menu"
+                    android:padding="3dp"
+                    android:background="?attr/selectableItemBackground"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+
+</LinearLayout>

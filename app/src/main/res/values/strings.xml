@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Movies And Shows</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="API_KEY">e7684f27608b0d0d83be08309126045d</string>
+    <string name="api_base_image_url">http://image.tmdb.org/t/p/w185</string>
+    <string name="menu_favorite">Mark as favorite</string>
+</resources>
