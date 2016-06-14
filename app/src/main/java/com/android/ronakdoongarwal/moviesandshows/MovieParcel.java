@@ -2,14 +2,20 @@ package com.android.ronakdoongarwal.moviesandshows;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.RatingBar;
+import android.widget.TextView;
 
 /**
  * Created by Development on 6/4/2016.
  */
-public class MovieParcel implements Parcelable {
+public class MovieParcel  implements Parcelable {
     String mMovieTitle, mOverview, mReleaseDate, mPoster_url;
     double mUserRating;
-    public MovieParcel(String movieTitle, String overview, String releaseDate, String poster_url, double userRating) {
+
+    public MovieParcel( String movieTitle, String overview, String releaseDate, String poster_url, double userRating) {
         this.mMovieTitle = movieTitle;
         this.mPoster_url = poster_url;
         this.mOverview = overview;
@@ -17,13 +23,16 @@ public class MovieParcel implements Parcelable {
         this.mReleaseDate = releaseDate;
     }
 
-    private MovieParcel(Parcel in) {
+    private MovieParcel( Parcel in) {
+
         this.mMovieTitle = in.readString();
         this.mPoster_url = in.readString();
         this.mOverview = in.readString();
         this.mUserRating = in.readDouble();
         this.mReleaseDate = in.readString();
     }
+
+
     public String getMovieTitle() {
         return mMovieTitle;
     }
@@ -75,5 +84,23 @@ public class MovieParcel implements Parcelable {
         dest.writeString(mOverview);
         dest.writeDouble(mUserRating);
         dest.writeString(mReleaseDate);
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder{
+        public final View mView;
+        public final ImageView moviePoster;
+        public final TextView movieTitle;
+        public final TextView movieRating;
+        public final RatingBar movieRatingBar;
+        public final View popupButton;
+        public ViewHolder(View itemView) {
+            super(itemView);
+            mView = itemView;
+            moviePoster= (ImageView) itemView.findViewById(R.id.movie_poster);
+            movieTitle= (TextView) itemView.findViewById(R.id.movie_title);
+            movieRating= (TextView) itemView.findViewById(R.id.movie_rating);
+            movieRatingBar= (RatingBar) itemView.findViewById(R.id.ratingBar);
+            popupButton=itemView.findViewById(R.id.popup_button);
+        }
     }
 }

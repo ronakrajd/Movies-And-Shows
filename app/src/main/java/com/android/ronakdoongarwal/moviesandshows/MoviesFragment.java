@@ -4,7 +4,10 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
+import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MoviesFragment extends Fragment implements AdapterView.OnItemSelectedListener, View.OnClickListener, ObservableScrollViewCallbacks {
+public class MoviesFragment extends Fragment implements AdapterView.OnItemSelectedListener, View.OnClickListener {
     private int mImageWidth;
     private int mImageHeight;
     protected static Spinner s=null;
@@ -77,7 +80,7 @@ public class MoviesFragment extends Fragment implements AdapterView.OnItemSelect
     private List<MovieParcel> movieList = new ArrayList<MovieParcel>();
     private static final String ARG_SECTION_NUMBER = "section_number";
     private MovieAdapter mMovieListAdapter;
-    private ObservableGridView mGridView ;
+    private RecyclerView recyclerView;
 
     public MoviesFragment() {
     }
@@ -91,11 +94,11 @@ public class MoviesFragment extends Fragment implements AdapterView.OnItemSelect
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        View rootView = inflater.inflate(R.layout.fragment_movies, container, false);
-        mGridView = (ObservableGridView) rootView.findViewById(R.id.gridView);
-        mGridView.setScrollViewCallbacks(this);
-        return rootView;
+        recyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_movies,container,false);
+        recyclerView.setLayoutManager(new GridLayoutManager(recyclerView.getContext(),2));
+        return recyclerView;
     }
+
     public void addToList(MovieParcel obj){
         movieList.add(obj);
     }
@@ -105,16 +108,16 @@ public class MoviesFragment extends Fragment implements AdapterView.OnItemSelect
 
     public void initUI() {
         mMovieListAdapter = new MovieAdapter(getActivity(), this, movieList);
-        mGridView.setAdapter(mMovieListAdapter);
+        recyclerView.setAdapter(mMovieListAdapter);
         GetMoviesTask.dialog.dismiss();
-        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                MovieParcel tempParcel = mMovieListAdapter.getItem(position);
-                Toast.makeText(getContext(),tempParcel.getMovieTitle(),Toast.LENGTH_LONG).show();
-            }
-        });
+//        recyclerView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+//                MovieParcel tempParcel = mMovieListAdapter.getItem(position);
+//                Toast.makeText(getContext(),tempParcel.getMovieTitle(),Toast.LENGTH_LONG).show();
+//            }
+//        });
     }
     @Override
     public void onClick(final View view) {
@@ -145,7 +148,7 @@ public class MoviesFragment extends Fragment implements AdapterView.OnItemSelect
 
 
     public int getNumGridViewCols() {
-        return mGridView.getNumColumns();
+        return 2;
     }
 
     public int getImageHeight() {
@@ -186,30 +189,5 @@ public class MoviesFragment extends Fragment implements AdapterView.OnItemSelect
         popup.show();
     }
 
-    @Override
-    public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
 
-    }
-
-    @Override
-    public void onDownMotionEvent() {
-
-    }
-
-    @Override
-    public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-        ActionBar ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
-        if (ab == null) {
-            return;
-        }
-        if (scrollState == ScrollState.UP) {
-            if (ab.isShowing()) {
-                ab.hide();
-            }
-        } else if (scrollState == ScrollState.DOWN) {
-            if (!ab.isShowing()) {
-                ab.show();
-            }
-        }
-    }
 }

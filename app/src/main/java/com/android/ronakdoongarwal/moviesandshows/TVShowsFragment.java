@@ -2,9 +2,14 @@ package com.android.ronakdoongarwal.moviesandshows;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.PopupMenu;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -12,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +28,7 @@ public class TVShowsFragment extends Fragment implements AdapterView.OnItemSelec
     protected static Spinner s=null;
     private int mImageWidth;
     private int mImageHeight;
+
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -59,7 +66,7 @@ public class TVShowsFragment extends Fragment implements AdapterView.OnItemSelec
     private static List<TVShowParcel> showList = new ArrayList<TVShowParcel>();
     private static final String ARG_SECTION_NUMBER = "section_number";
     private TVShowAdapter mShowListAdapter;
-    private GridView mGridView ;
+    private RecyclerView recyclerView;
 
     public TVShowsFragment() {
     }
@@ -73,9 +80,9 @@ public class TVShowsFragment extends Fragment implements AdapterView.OnItemSelec
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        View rootView = inflater.inflate(R.layout.fragment_tvshows, container, false);
-        mGridView = (GridView) rootView.findViewById(R.id.gridView);
-        return rootView;
+        recyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_tvshows,container,false);
+        recyclerView.setLayoutManager(new GridLayoutManager(recyclerView.getContext(),2));
+        return recyclerView;
     }
     public void addToList(TVShowParcel obj){
         showList.add(obj);
@@ -85,8 +92,9 @@ public class TVShowsFragment extends Fragment implements AdapterView.OnItemSelec
     }
 
     public void initUI() {
+        Log.d("debugging", "initUI: ");
         mShowListAdapter = new TVShowAdapter(getActivity(), this, showList);
-        mGridView.setAdapter(mShowListAdapter);
+        recyclerView.setAdapter(mShowListAdapter);
         GetShowsTask.dialog.dismiss();
     }
 
@@ -103,8 +111,7 @@ public class TVShowsFragment extends Fragment implements AdapterView.OnItemSelec
     }
 
     public int getNumGridViewCols() {
-        return mGridView.getNumColumns();
-    }
+        return 2;    }
 
     public int getImageHeight() {
         return mImageHeight;
@@ -112,5 +119,32 @@ public class TVShowsFragment extends Fragment implements AdapterView.OnItemSelec
 
     public int getImageWidth() {
         return mImageWidth;
+    }
+    
+    public void showPopupMenu(View view) {
+        // Retrieve the clicked item from view's tag
+        final String item = (String) view.getTag();
+
+        // Create a PopupMenu, giving it the clicked view for an anchor
+        PopupMenu popup = new PopupMenu(getActivity(), view);
+
+        // Inflate our menu resource into the PopupMenu's Menu
+        popup.getMenuInflater().inflate(R.menu.popup, popup.getMenu());
+
+        // Set a listener so we are notified if a menu item is clicked
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.menu_favorite:
+                        Toast.makeText(getContext(),"Working on the feature...",Toast.LENGTH_LONG).show();
+                        return true;
+                }
+                return false;
+            }
+        });
+
+        // Finally show the PopupMenu
+        popup.show();
     }
 }

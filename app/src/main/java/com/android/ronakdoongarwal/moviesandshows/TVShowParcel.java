@@ -2,6 +2,11 @@ package com.android.ronakdoongarwal.moviesandshows;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.RatingBar;
+import android.widget.TextView;
 
 /**
  * Created by Development on 6/4/2016.
@@ -75,5 +80,22 @@ public class TVShowParcel implements Parcelable {
         dest.writeString(mOverview);
         dest.writeDouble(mUserRating);
         dest.writeString(mReleaseDate);
+    }
+    public static class ViewHolder extends RecyclerView.ViewHolder{
+        public final View mView;
+        public final ImageView showPoster;
+        public final TextView showTitle;
+        public final TextView showRating;
+        public final RatingBar showRatingBar;
+        public final View popupButton;
+        public ViewHolder(View itemView) {
+            super(itemView);
+            mView = itemView;
+            showPoster= (ImageView) itemView.findViewById(R.id.movie_poster);
+            showTitle= (TextView) itemView.findViewById(R.id.movie_title);
+            showRating= (TextView) itemView.findViewById(R.id.movie_rating);
+            showRatingBar= (RatingBar) itemView.findViewById(R.id.ratingBar);
+            popupButton=itemView.findViewById(R.id.popup_button);
+        }
     }
 }

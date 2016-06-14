@@ -63,7 +63,8 @@
                     android:layout_marginStart="2dp"
                     android:layout_gravity="center"
                     style="?attr/ratingBarStyleSmall"
-                    android:layout_marginLeft="2dp" />
+                    android:layout_marginLeft="2dp"
+                    android:theme="@style/RatingBar"/>
 
             </LinearLayout>
 
