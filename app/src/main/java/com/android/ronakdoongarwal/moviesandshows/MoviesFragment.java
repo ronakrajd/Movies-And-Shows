@@ -36,6 +36,7 @@ public class MoviesFragment extends Fragment implements AdapterView.OnItemSelect
     protected static Spinner s=null;
     public static String sortByParam;
     private DisplayMetrics mDisplayMetrics = new DisplayMetrics();
+    public static RecyclerView recyclerView;
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -80,7 +81,7 @@ public class MoviesFragment extends Fragment implements AdapterView.OnItemSelect
     private List<MovieParcel> movieList = new ArrayList<MovieParcel>();
     private static final String ARG_SECTION_NUMBER = "section_number";
     private MovieAdapter mMovieListAdapter;
-    private RecyclerView recyclerView;
+
 
     public MoviesFragment() {
     }

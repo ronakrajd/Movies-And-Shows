@@ -1,6 +1,7 @@
 package com.android.ronakdoongarwal.moviesandshows;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -19,7 +20,7 @@ import java.util.List;
 /**
  * Created by Development on 6/5/2016.
  */
-public class MovieAdapter extends RecyclerView.Adapter<MovieParcel.ViewHolder> {
+public class MovieAdapter extends RecyclerView.Adapter<MovieParcel.ViewHolder> implements View.OnClickListener {
     private Context mContext;
     private MoviesFragment mActivityFragment;
     private String mBaseImgStr = "";
@@ -94,6 +95,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieParcel.ViewHolder> {
     public MovieParcel.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.movie_grid_layout, parent, false);
+        view.setOnClickListener(this);
         return new MovieParcel.ViewHolder(view);
 
     }
@@ -148,5 +150,16 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieParcel.ViewHolder> {
     @Override
     public int getItemCount() {
         return movieParcels.size();
+    }
+
+    @Override
+    public void onClick(View v) {
+        int position = MoviesFragment.recyclerView.getChildLayoutPosition(v);
+        MovieParcel movieParcel = movieParcels.get(position);
+        Log.d("posterPath", movieParcel.getBackdropURL());
+        Intent intent = new Intent(mContext,MovieDetailActivity.class);
+        intent.putExtra("movieTitle",movieParcel.getMovieTitle());
+        intent.putExtra("backdropURL",movieParcel.getBackdropURL());
+        mContext.startActivity(intent);
     }
 }

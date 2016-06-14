@@ -6,6 +6,7 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">#5D4037</item>
     </style>
+
     <style name="RatingBar" parent="Theme.AppCompat">
         <item name="colorControlNormal">#b7b7b7</item>
         <item name="colorControlActivated">@color/ratingColorAccent</item>

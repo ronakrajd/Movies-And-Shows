@@ -12,15 +12,16 @@ import android.widget.TextView;
  * Created by Development on 6/4/2016.
  */
 public class MovieParcel  implements Parcelable {
-    String mMovieTitle, mOverview, mReleaseDate, mPoster_url;
+    String mMovieTitle, mOverview, mReleaseDate, mPoster_url, mBackdrop_url;
     double mUserRating;
 
-    public MovieParcel( String movieTitle, String overview, String releaseDate, String poster_url, double userRating) {
+    public MovieParcel( String movieTitle, String overview, String releaseDate, String poster_url,String backdropURL, double userRating) {
         this.mMovieTitle = movieTitle;
         this.mPoster_url = poster_url;
         this.mOverview = overview;
         this.mUserRating = userRating;
         this.mReleaseDate = releaseDate;
+        this.mBackdrop_url = backdropURL;
     }
 
     private MovieParcel( Parcel in) {
@@ -30,6 +31,7 @@ public class MovieParcel  implements Parcelable {
         this.mOverview = in.readString();
         this.mUserRating = in.readDouble();
         this.mReleaseDate = in.readString();
+        this.mBackdrop_url = in.readString();
     }
 
 
@@ -53,12 +55,14 @@ public class MovieParcel  implements Parcelable {
         return mReleaseDate;
     }
 
+    public String getBackdropURL() {return mBackdrop_url;
+    }
     public String toString() {
         return mMovieTitle + "--" +
                 mPoster_url + "--" +
                 mOverview + "--" +
                 mUserRating + "--" +
-                mReleaseDate; }
+                mReleaseDate+ "--"+ mBackdrop_url; }
 
     public static final Creator<MovieParcel> CREATOR = new Creator<MovieParcel>() {
         @Override
@@ -84,7 +88,9 @@ public class MovieParcel  implements Parcelable {
         dest.writeString(mOverview);
         dest.writeDouble(mUserRating);
         dest.writeString(mReleaseDate);
+        dest.writeString(mBackdrop_url);
     }
+
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
         public final View mView;

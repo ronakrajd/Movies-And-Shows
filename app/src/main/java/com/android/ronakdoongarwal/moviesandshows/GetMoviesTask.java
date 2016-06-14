@@ -92,7 +92,7 @@ public class GetMoviesTask extends AsyncTask<Void, Void, Void> {
         JSONObject movieDetailObject=null;
         JSONArray resultArray=null;
         int totalPages;
-        String movieTitle, posterURL, overView, releaseDate;
+        String movieTitle, posterURL, overView, releaseDate, backdropURL;
         double userRating;
         try{
             if (jsonStr==null) {
@@ -106,13 +106,16 @@ public class GetMoviesTask extends AsyncTask<Void, Void, Void> {
                 movieTitle=movieDetailObject.getString("title");
                 posterURL=movieDetailObject.getString("poster_path");
                 overView=movieDetailObject.getString("overview");
+                backdropURL=movieDetailObject.getString("backdrop_path");
                 userRating=movieDetailObject.getDouble("vote_average");
                 releaseDate=movieDetailObject.getString("release_date");
+
                     Log.d("detailadf", movieTitle);
                 MovieParcel tempParcel = new MovieParcel(movieTitle,
                         overView,
                         releaseDate,
                         posterURL,
+                        backdropURL,
                         userRating);
                 moviesFragment.addToList(tempParcel);
             }
