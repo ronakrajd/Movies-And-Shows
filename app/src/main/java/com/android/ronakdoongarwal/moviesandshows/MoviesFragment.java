@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -51,6 +52,13 @@ public class MoviesFragment extends Fragment implements AdapterView.OnItemSelect
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        if(parent.getItemAtPosition(position).toString().equals("Favorites")){
+           // Log.d("favorite","Inside favorite" );
+            FavoriteMovieDBHelper db = new FavoriteMovieDBHelper(getContext());
+            movieList.clear();
+            movieList=db.getFavoriteMovieList();
+            initUI();
+        }
         if(parent.getItemAtPosition(position).toString().equals("Popular")){
             sortByParam="popular";
             GetMoviesTask fetchMovies = new GetMoviesTask(this, getActivity());
@@ -165,7 +173,7 @@ public class MoviesFragment extends Fragment implements AdapterView.OnItemSelect
 
     public void showPopupMenu(View view) {
         // Retrieve the clicked item from view's tag
-        final String item = (String) view.getTag();
+        final int position = (int) view.getTag();
 
         // Create a PopupMenu, giving it the clicked view for an anchor
         PopupMenu popup = new PopupMenu(getActivity(), view);
@@ -179,7 +187,8 @@ public class MoviesFragment extends Fragment implements AdapterView.OnItemSelect
             public boolean onMenuItemClick(MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.menu_favorite:
-                        Toast.makeText(getContext(),"Working on the feature...",Toast.LENGTH_LONG).show();
+                        FavoriteMovieDBHelper favoriteMovie = new FavoriteMovieDBHelper(getContext());
+                        favoriteMovie.addMovieToFavorite(movieList.get(position));
                         return true;
                 }
                 return false;

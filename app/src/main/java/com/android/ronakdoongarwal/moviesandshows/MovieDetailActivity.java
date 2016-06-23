@@ -1,9 +1,11 @@
 package com.android.ronakdoongarwal.moviesandshows;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -18,20 +20,27 @@ public class MovieDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //enabling the back to parent arrow in the action bar
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        collapsingToolbarLayout.setTitle(getIntent().getCharSequenceExtra("movieTitle"));
-
+        final MovieParcel movieParcel = getIntent().getParcelableExtra("movieParcel");
+        //loading the backdrop poster in the imageview inside collasping toolbar
         ImageView imageView = (ImageView) findViewById(R.id.backdrop);
-        Glide.with(this).load(getResources().getString(R.string.api_backdrop_url)+getIntent().getCharSequenceExtra("backdropURL")).centerCrop().into(imageView);
+        Glide.with(this).load(getResources().getString(R.string.api_backdrop_url)+movieParcel.getBackdropURL()).centerCrop().into(imageView);
 
+        //setting the title of the movie on the t6oolbar
+        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        collapsingToolbarLayout.setTitle(movieParcel.getMovieTitle());
 
+        //performing the favorite action on floating action button of favorite
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        assert fab != null;
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                FavoriteMovieDBHelper favoriteMovie = new FavoriteMovieDBHelper(getApplicationContext());
+                favoriteMovie.addMovieToFavorite(movieParcel);
                 Snackbar.make(view, "Movie added to favorites", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }

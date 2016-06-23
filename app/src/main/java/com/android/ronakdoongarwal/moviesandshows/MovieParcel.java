@@ -12,18 +12,29 @@ import android.widget.TextView;
  * Created by Development on 6/4/2016.
  */
 public class MovieParcel  implements Parcelable {
-    String mMovieTitle, mOverview, mReleaseDate, mPoster_url, mBackdrop_url;
+    String convertedReleaseDate;
+    String mMovieTitle, mOverview, mReleaseDate, mPoster_url, mBackdrop_url, mVoteCount;
     double mUserRating;
+    int mMovieId;
 
-    public MovieParcel( String movieTitle, String overview, String releaseDate, String poster_url,String backdropURL, double userRating) {
+    public MovieParcel(String movieTitle, String overview, String releaseDate, String poster_url, String backdropURL, double userRating, String voteCount, int movieId) {
         this.mMovieTitle = movieTitle;
         this.mPoster_url = poster_url;
         this.mOverview = overview;
         this.mUserRating = userRating;
-        this.mReleaseDate = releaseDate;
+        convertedReleaseDate = converReleaseDate(releaseDate);
+        this.mReleaseDate = convertedReleaseDate;
+        this.mVoteCount = voteCount;
         this.mBackdrop_url = backdropURL;
+        this.mMovieId = movieId;
     }
-
+    private String converReleaseDate(String releaseDate) {
+        String temp[] = releaseDate.split("-");
+        String year = temp[0];
+        String month = temp[1];
+        String day = temp[2];
+        return (day+"-"+month+"-"+year);
+    }
     private MovieParcel( Parcel in) {
 
         this.mMovieTitle = in.readString();
@@ -32,8 +43,11 @@ public class MovieParcel  implements Parcelable {
         this.mUserRating = in.readDouble();
         this.mReleaseDate = in.readString();
         this.mBackdrop_url = in.readString();
+        this.mVoteCount = in.readString();
+        this.mMovieId  = in.readInt();
     }
 
+    public String getVoteCount() {  return mVoteCount;}
 
     public String getMovieTitle() {
         return mMovieTitle;
@@ -57,12 +71,17 @@ public class MovieParcel  implements Parcelable {
 
     public String getBackdropURL() {return mBackdrop_url;
     }
+
+    public int getmMovieId(){return  mMovieId;}
     public String toString() {
         return mMovieTitle + "--" +
                 mPoster_url + "--" +
                 mOverview + "--" +
                 mUserRating + "--" +
-                mReleaseDate+ "--"+ mBackdrop_url; }
+                mReleaseDate+ "--"+
+                mBackdrop_url+"--"+
+                mVoteCount+"--"+
+                mMovieId; }
 
     public static final Creator<MovieParcel> CREATOR = new Creator<MovieParcel>() {
         @Override
@@ -89,6 +108,8 @@ public class MovieParcel  implements Parcelable {
         dest.writeDouble(mUserRating);
         dest.writeString(mReleaseDate);
         dest.writeString(mBackdrop_url);
+        dest.writeString(mVoteCount);
+        dest.writeInt(mMovieId);
     }
 
 

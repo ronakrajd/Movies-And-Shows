@@ -5,9 +5,12 @@
         <item>Top Rated</item>
         <item>In theatres</item>
         <item>Coming Soon</item>
+        <item>Favorites</item>
     </string-array>
     <string-array name="sort_menu_spinner_list2">
+
         <item>Popular</item>
         <item>Top Rated</item>
+        <item>Favorite</item>
     </string-array>
 </resources>

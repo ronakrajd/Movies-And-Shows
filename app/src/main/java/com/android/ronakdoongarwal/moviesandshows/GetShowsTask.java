@@ -92,7 +92,8 @@ public class GetShowsTask extends AsyncTask<Void, Void, Void> {
         JSONObject showDetailObject=null;
         JSONArray resultArray=null;
         int totalPages;
-        String showTitle, posterURL, overView, releaseDate;
+        String showTitle, posterURL, overView, releaseDate, backdropURL, voteCount;
+        int showId;
         double userRating;
         try{
             if (jsonStr==null) {
@@ -106,14 +107,20 @@ public class GetShowsTask extends AsyncTask<Void, Void, Void> {
                 showTitle=showDetailObject.getString("name");
                 posterURL=showDetailObject.getString("poster_path");
                 overView=showDetailObject.getString("overview");
+                backdropURL=showDetailObject.getString("backdrop_path");
                 userRating=showDetailObject.getDouble("vote_average");
                 releaseDate=showDetailObject.getString("first_air_date");
+                voteCount = showDetailObject.getString("vote_count");
+                showId = showDetailObject.getInt("id");
                     Log.d("detailadf", showTitle);
                 TVShowParcel tempParcel = new TVShowParcel(showTitle,
                         overView,
                         releaseDate,
                         posterURL,
-                        userRating);
+                        backdropURL,
+                        userRating,
+                        voteCount,
+                        showId);
                 tvShowsFragment.addToList(tempParcel);
             }
             Bitmap image;

@@ -1,6 +1,7 @@
 package com.android.ronakdoongarwal.moviesandshows;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -19,7 +20,7 @@ import java.util.List;
 /**
  * Created by Development on 6/5/2016.
  */
-public class TVShowAdapter extends RecyclerView.Adapter<TVShowParcel.ViewHolder> {
+public class TVShowAdapter extends RecyclerView.Adapter<TVShowParcel.ViewHolder> implements View.OnClickListener {
     private Context mContext;
     private TVShowsFragment mActivityFragment;
     private String mBaseImgStr = "";
@@ -78,6 +79,7 @@ public class TVShowAdapter extends RecyclerView.Adapter<TVShowParcel.ViewHolder>
     public TVShowParcel.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.movie_grid_layout, parent, false);
+        view.setOnClickListener(this);
         return new TVShowParcel.ViewHolder(view);
     }
 
@@ -132,5 +134,17 @@ public class TVShowAdapter extends RecyclerView.Adapter<TVShowParcel.ViewHolder>
     @Override
     public int getItemCount() {
         return showParcels.size();
+    }
+
+    @Override
+    public void onClick(View v) {
+        int position = TVShowsFragment.recyclerView.getChildLayoutPosition(v);
+        TVShowParcel showParcel = showParcels.get(position);
+        Intent intent = new Intent(mContext,ShowsDetailActivity.class);
+//        intent.putExtra("showTitle",showParcel.getTVShowTitle());
+//        intent.putExtra("backdropURL",showParcel.getBackdropURL());
+//        intent.putExtra("posterURL",showParcel.getImagePosterURL());
+        intent.putExtra("showParcel",showParcel);
+        mContext.startActivity(intent);
     }
 }

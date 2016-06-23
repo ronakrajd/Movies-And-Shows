@@ -24,7 +24,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieParcel.ViewHolder> i
     private Context mContext;
     private MoviesFragment mActivityFragment;
     private String mBaseImgStr = "";
-    public List<MovieParcel> movieParcels;
+    public List<MovieParcel> movieParcelList;
 
     public MovieAdapter(Context context, MoviesFragment activityFragment, List<MovieParcel> movieParcelList) {
         //super(context, R.layout.movie_grid_layout, imageUrls);
@@ -32,7 +32,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieParcel.ViewHolder> i
         this.mContext = context;
         this.mActivityFragment = activityFragment;
         this.mBaseImgStr = mActivityFragment.getString(R.string.api_base_image_url);
-        this.movieParcels = movieParcelList;
+        this.movieParcelList = movieParcelList;
     }
 //
 //    @Override
@@ -91,6 +91,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieParcel.ViewHolder> i
 //        return convertView;
 //    }
 
+
     @Override
     public MovieParcel.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
@@ -102,7 +103,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieParcel.ViewHolder> i
 
     @Override
     public void onBindViewHolder(MovieParcel.ViewHolder holder, int position) {
-        MovieParcel movieParcel = movieParcels.get(position);
+        MovieParcel movieParcel = movieParcelList.get(position);
         String movieTitle = movieParcel.getMovieTitle();
         holder.movieTitle.setText(movieTitle);
 
@@ -134,7 +135,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieParcel.ViewHolder> i
         holder.movieRatingBar.setRating((float) rating);
 
         //overflow button for favourite
-        holder.popupButton.setTag(movieTitle);
+        holder.popupButton.setTag(position);
         holder.popupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
@@ -149,17 +150,17 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieParcel.ViewHolder> i
     }
     @Override
     public int getItemCount() {
-        return movieParcels.size();
+        return movieParcelList.size();
     }
 
     @Override
     public void onClick(View v) {
         int position = MoviesFragment.recyclerView.getChildLayoutPosition(v);
-        MovieParcel movieParcel = movieParcels.get(position);
-        Log.d("posterPath", movieParcel.getBackdropURL());
+        MovieParcel movieParcel = movieParcelList.get(position);
         Intent intent = new Intent(mContext,MovieDetailActivity.class);
-        intent.putExtra("movieTitle",movieParcel.getMovieTitle());
-        intent.putExtra("backdropURL",movieParcel.getBackdropURL());
+//        intent.putExtra("movieTitle",movieParcel.getMovieTitle());
+//        intent.putExtra("backdropURL",movieParcel.getBackdropURL());
+        intent.putExtra("movieParcel",movieParcel);
         mContext.startActivity(intent);
     }
 }

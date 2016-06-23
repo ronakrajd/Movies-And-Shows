@@ -3,21 +3,17 @@ package com.android.ronakdoongarwal.moviesandshows;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
-import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -38,37 +34,37 @@ import java.util.List;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MovieDetailActivityFragment extends Fragment implements View.OnClickListener {
+public class ShowsDetailActivityFragment extends Fragment implements View.OnClickListener {
     public static ArrayList<String> videoPath = new ArrayList<>();
     public static ArrayList<String> videoType = new ArrayList<>();
-    public static ArrayList<String> author = new ArrayList<>();
-    public static List<Review> review = new ArrayList<>();
+    public static List<Review>  review = new ArrayList<>();
     View view;
-    public MovieDetailActivityFragment() {
+    public ShowsDetailActivityFragment() {
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_movie_detail, container, false);
-        MovieParcel movieParcel = getActivity().getIntent().getParcelableExtra("movieParcel");
-        ImageView imageView = (ImageView) view.findViewById(R.id.posterImage);
+        view= inflater.inflate(R.layout.fragment_shows_detail, container, false);
+        TVShowParcel showParcel = getActivity().getIntent().getParcelableExtra("showParcel");
+//        Log.d("posterurl", ""+(getResources().getString(R.string.api_base_image_url)+getActivity().getIntent().getCharSequenceExtra("posterURL")));
+        ImageView imageView  = (ImageView) view.findViewById(R.id.posterImage);
         Glide.with(this)
-                .load(getResources().getString(R.string.api_base_detail_image_url) + movieParcel.getImagePosterURL())
-                .override(154, 200)
+                .load(getResources().getString(R.string.api_base_detail_image_url)+showParcel.getImagePosterURL())
+                .override(154,200)
                 .into(imageView);
-        ((TextView) view.findViewById(R.id.dshow_title)).setText(movieParcel.getMovieTitle());
+        ((TextView)view.findViewById(R.id.dshow_title)).setText(showParcel.getTVShowTitle());
         RatingBar ratingBar = (RatingBar) view.findViewById(R.id.detail_acitvity_rating_bar);
-        ratingBar.setRating((float) movieParcel.getUserRating());
-        ((TextView) view.findViewById(R.id.rating)).setText(String.valueOf(movieParcel.getUserRating()));
-        ((TextView) view.findViewById(R.id.release_date)).setText(movieParcel.getReleaseDate());
-        ((TextView) view.findViewById(R.id.overview_text)).setText(movieParcel.getOverview());
-        ((TextView) view.findViewById(R.id.vote_count)).setText(movieParcel.getVoteCount());
-        GetMovieVideos fetchVideos = new GetMovieVideos(this,movieParcel.getmMovieId());
+        ratingBar.setRating((float) showParcel.getUserRating());
+        ((TextView)view.findViewById(R.id.rating)).setText(String.valueOf(showParcel.getUserRating()));
+        ((TextView)view.findViewById(R.id.release_date)).setText(showParcel.getReleaseDate());
+        ((TextView)view.findViewById(R.id.overview_text)).setText(showParcel.getOverview());
+        ((TextView)view.findViewById(R.id.vote_count)).setText(showParcel.getVoteCount());
+        GetShowVideos fetchVideos = new GetShowVideos(this,showParcel.getShowId());
         fetchVideos.execute();
-        GetMovieReviews fetchReviews = new GetMovieReviews(this,movieParcel.getmMovieId());
+        GetShowReviews fetchReviews = new GetShowReviews(this,showParcel.getShowId());
         fetchReviews.execute();
-        return view;
+        return  view;
     }
 
     @Override
@@ -77,94 +73,92 @@ public class MovieDetailActivityFragment extends Fragment implements View.OnClic
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v="+videoPath.get(position))));
     }
 
-    public static class GetMovieVideos extends AsyncTask<Void, Void, Void> {
-        private int movieId;
-        private MovieDetailActivityFragment mdFragment;
+    public static class GetShowVideos extends AsyncTask<Void, Void, Void> {
+        private int showId;
+        private ShowsDetailActivityFragment mdFragment;
 
-        public GetMovieVideos(MovieDetailActivityFragment mfragment, int movieId) {
-            this.mdFragment = mfragment;
-            this.movieId = movieId;
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-            String jsonStr = null;
-            try {
-                videoPath.clear();
-                videoType.clear();
-                try {
-                    Uri.Builder builder = new Uri.Builder();
-                    String key = "e7684f27608b0d0d83be08309126045d";
-                    builder.scheme("https")
-                            .authority("api.themoviedb.org")
-                            .appendPath("3")
-                            .appendPath("movie")
-                            .appendPath("" + movieId)
-                            .appendPath("videos")
-                            .appendQueryParameter("api_key", key);
-                    String strURL = builder.build().toString();
-                    Log.d("url", strURL);
-                    URL url = new URL(strURL);
-                    urlConnection = (HttpURLConnection) url.openConnection();
-                    urlConnection.setRequestMethod("GET");
-                    urlConnection.connect();
-                    InputStream inputStream = urlConnection.getInputStream();
-                    StringBuffer stringBuffer = new StringBuffer();
-                    if (inputStream == null)
-                        jsonStr = null;
-                    reader = new BufferedReader(new InputStreamReader(inputStream));
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        stringBuffer.append(line + "\n");
-                    }
-                    if (stringBuffer.length() == 0) {
-                        jsonStr = null;
-                    }
-                    jsonStr = stringBuffer.toString();
-                } catch (MalformedURLException e) {
-                    Log.e("GetMoviesDetails", "Errot", e);
-                }
-            } catch (IOException e) {
-                Log.e("GetMoviesDetails", "doInBackground: ", e);
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            JSONObject movieVideoObject = null;
-            JSONArray resultArray = null;
-            String path, type;
-            try {
-                if (jsonStr == null) {
-                    return null;
-                }
-                JSONObject json = new JSONObject(jsonStr);
-                resultArray = json.getJSONArray("results");
-                for (int i = 0; i < resultArray.length(); i++) {
-                    movieVideoObject = resultArray.getJSONObject(i);
-                    videoPath.add(movieVideoObject.getString("key"));
-                    videoType.add(movieVideoObject.getString("type"));
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            mdFragment.populateVideos();
-        }
+        public GetShowVideos(ShowsDetailActivityFragment mfragment, int showId) {
+        this.mdFragment = mfragment;
+        this.showId = showId;
     }
+
+    @Override
+    protected Void doInBackground(Void... params) {
+        HttpURLConnection urlConnection = null;
+        BufferedReader reader = null;
+        String jsonStr = null;
+        try {
+            videoPath.clear();
+            videoType.clear();
+            try {
+                Uri.Builder builder = new Uri.Builder();
+                String key = "e7684f27608b0d0d83be08309126045d";
+                builder.scheme("https")
+                        .authority("api.themoviedb.org")
+                        .appendPath("3")
+                        .appendPath("tv")
+                        .appendPath("" + showId)
+                        .appendPath("videos")
+                        .appendQueryParameter("api_key", key);
+                String strURL = builder.build().toString();
+                Log.d("url", strURL);
+                URL url = new URL(strURL);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuffer stringBuffer = new StringBuffer();
+                if (inputStream == null)
+                    jsonStr = null;
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    stringBuffer.append(line + "\n");
+                }
+                if (stringBuffer.length() == 0) {
+                    jsonStr = null;
+                }
+                jsonStr = stringBuffer.toString();
+            } catch (MalformedURLException e) {
+            }
+        } catch (IOException e) {
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        JSONObject showVideoObject = null;
+        JSONArray resultArray = null;
+        String path, type;
+        try {
+            if (jsonStr == null) {
+                return null;
+            }
+            JSONObject json = new JSONObject(jsonStr);
+            resultArray = json.getJSONArray("results");
+            for (int i = 0; i < resultArray.length(); i++) {
+                showVideoObject = resultArray.getJSONObject(i);
+                videoPath.add(showVideoObject.getString("key"));
+                videoType.add(showVideoObject.getString("type"));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        mdFragment.populateVideos();
+    }
+}
 
     private void populateVideos() {
         LinearLayout videoListLayout = (LinearLayout) view.findViewById(R.id.video_list);
@@ -177,14 +171,13 @@ public class MovieDetailActivityFragment extends Fragment implements View.OnClic
             view.setOnClickListener(this);
         }
     }
+    public static class GetShowReviews extends AsyncTask<Void, Void, Void> {
+        private int showId;
+        private ShowsDetailActivityFragment mdFragment;
 
-    public static class GetMovieReviews extends AsyncTask<Void, Void, Void> {
-        private int movieId;
-        private MovieDetailActivityFragment mdFragment;
-
-        public GetMovieReviews(MovieDetailActivityFragment mfragment, int movieId) {
+        public GetShowReviews(ShowsDetailActivityFragment mfragment, int showId) {
             this.mdFragment = mfragment;
-            this.movieId = movieId;
+            this.showId = showId;
         }
 
         @Override
@@ -200,8 +193,8 @@ public class MovieDetailActivityFragment extends Fragment implements View.OnClic
                     builder.scheme("https")
                             .authority("api.themoviedb.org")
                             .appendPath("3")
-                            .appendPath("movie")
-                            .appendPath("" + movieId)
+                            .appendPath("tv")
+                            .appendPath("" + showId)
                             .appendPath("reviews")
                             .appendQueryParameter("api_key", key);
                     String strURL = builder.build().toString();
@@ -240,7 +233,7 @@ public class MovieDetailActivityFragment extends Fragment implements View.OnClic
                     }
                 }
             }
-            JSONObject movieReviewObject = null;
+            JSONObject showReviewObject = null;
             String author,content;
             JSONArray resultArray = null;
             try {
@@ -250,9 +243,9 @@ public class MovieDetailActivityFragment extends Fragment implements View.OnClic
                 JSONObject json = new JSONObject(jsonStr);
                 resultArray = json.getJSONArray("results");
                 for (int i = 0; i < resultArray.length(); i++) {
-                    movieReviewObject = resultArray.getJSONObject(i);
-                    author = movieReviewObject.getString("author");
-                    content = movieReviewObject.getString("content");
+                    showReviewObject = resultArray.getJSONObject(i);
+                    author = showReviewObject.getString("author");
+                    content = showReviewObject.getString("content");
                     Review r = new Review(author,content);
                     review.add(r);
                 }

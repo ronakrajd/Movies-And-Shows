@@ -28,7 +28,7 @@ public class TVShowsFragment extends Fragment implements AdapterView.OnItemSelec
     protected static Spinner s=null;
     private int mImageWidth;
     private int mImageHeight;
-
+    public static RecyclerView recyclerView;
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -45,6 +45,12 @@ public class TVShowsFragment extends Fragment implements AdapterView.OnItemSelec
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        if(parent.getItemAtPosition(position).toString().equals("Favorite")){
+            FavoriteShowDBHelper db = new FavoriteShowDBHelper(getContext());
+            showList.clear();;
+            showList = db.getFavoriteShowList();
+            initUI();
+        }
         if(parent.getItemAtPosition(position).toString().equals("Popular")){
             MoviesFragment.sortByParam="popular";
             GetShowsTask fetchShows = new GetShowsTask(this, getActivity());
@@ -66,7 +72,6 @@ public class TVShowsFragment extends Fragment implements AdapterView.OnItemSelec
     private static List<TVShowParcel> showList = new ArrayList<TVShowParcel>();
     private static final String ARG_SECTION_NUMBER = "section_number";
     private TVShowAdapter mShowListAdapter;
-    private RecyclerView recyclerView;
 
     public TVShowsFragment() {
     }
