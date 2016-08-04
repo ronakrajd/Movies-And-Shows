@@ -12,4 +12,9 @@
     <string name="title_activity_movie_detail">MovieDetailActivity</string>
     <string name="title_activity_shows_detail">ShowsDetailActivity</string>
     <string name="subtitle">Tagline</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="title_activity_search">Search</string>
+    <string name="action_search">Search</string>
+    <string name="search_hint">Enter movie name to search</string>
 </resources>

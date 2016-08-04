@@ -1,10 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.android.ronakdoongarwal.moviesandshows.MoviesActivity">
-<item android:title="Sort"
-    android:id="@+id/sort_menu_spinner"
-    app:showAsAction="always"
-    app:actionViewClass="android.widget.Spinner" />
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<item android:title="Sort Movies By">
+    <menu>
+    <group android:checkableBehavior="single"
+        android:id="@+id/sort_movies">
+
+        <item
+            android:id="@+id/nav_popular"
+            android:title="Popular"
+            android:icon="@drawable/icon_poupular"/>
+        <item
+            android:id="@+id/nav_top_rated"
+            android:icon="@drawable/icon_top"
+            android:title="Top Rated" />
+        <item
+            android:id="@+id/nav_in_theatres"
+            android:icon="@drawable/icon_ticket"
+            android:title="In theatres" />
+        <item
+        android:id="@+id/nav_coming_soon"
+        android:icon="@drawable/icon_coming"
+        android:title="Coming Soon" />
+        <item
+            android:id="@+id/nav_favorites"
+            android:icon="@drawable/icon_favorite"
+            android:title="Favorites" />
+    </group>
+    </menu>
+</item>
+    <item android:title="Sort Shows By">
+<menu>
+        <group android:checkableBehavior="single"
+            android:id="@+id/sort_shows" >
+            <item
+                android:id="@+id/nav_popular_shows"
+
+                android:icon="@drawable/icon_poupular"
+                android:title="Popular"  />
+            <item
+                android:id="@+id/nav_top_rated_shows"
+                android:icon="@drawable/icon_top"
+                android:title="Top Rated" />
+
+            <item
+                android:id="@+id/nav_favorites_shows"
+                android:icon="@drawable/icon_favorite"
+                android:title="Favorites" />
+        </group>
+</menu>
+    </item>
+
+
 </menu>

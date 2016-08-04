@@ -1,7 +1,11 @@
 package com.android.ronakdoongarwal.moviesandshows;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -31,67 +35,88 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MoviesFragment extends Fragment implements AdapterView.OnItemSelectedListener, View.OnClickListener {
+public class MoviesFragment extends Fragment implements View.OnClickListener {
     private int mImageWidth;
     private int mImageHeight;
-    protected static Spinner s=null;
-    public static String sortByParam;
-    private DisplayMetrics mDisplayMetrics = new DisplayMetrics();
-    public static RecyclerView recyclerView;
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-
-        inflater.inflate(R.menu.sort_menu, menu); // inflate the menu
-        s = (Spinner) menu.findItem(R.id.sort_menu_spinner).getActionView();     // find the spinner
-        SpinnerAdapter mSpinnerAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.sort_menu_spinner_list, android.R.layout.simple_spinner_dropdown_item);    // create the adapter from a StringArray
-        s.setAdapter(mSpinnerAdapter);   // set the adapter
-        s.setOnItemSelectedListener(this);    // (optional) reference to a OnItemSelectedListener, that you can use to perform actions based on user selection
-        super.onCreateOptionsMenu(menu,inflater);
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        if(parent.getItemAtPosition(position).toString().equals("Favorites")){
-           // Log.d("favorite","Inside favorite" );
-            FavoriteMovieDBHelper db = new FavoriteMovieDBHelper(getContext());
-            movieList.clear();
-            movieList=db.getFavoriteMovieList();
-            initUI();
-        }
-        if(parent.getItemAtPosition(position).toString().equals("Popular")){
-            sortByParam="popular";
-            GetMoviesTask fetchMovies = new GetMoviesTask(this, getActivity());
-            fetchMovies.execute();
-        }
-        if(parent.getItemAtPosition(position).toString().equals("Top Rated")){
-            sortByParam="top_rated";
-            GetMoviesTask fetchMovies = new GetMoviesTask(this, getActivity());
-            fetchMovies.execute();
-        }
-        if(parent.getItemAtPosition(position).toString().equals("In theatres")){
-            sortByParam="now_playing";
-            GetMoviesTask fetchMovies = new GetMoviesTask(this,getActivity());
-            fetchMovies.execute();
-        }
-        if(parent.getItemAtPosition(position).toString().equals("Coming Soon")){
-            sortByParam="upcoming";
-            GetMoviesTask fetchMovies = new GetMoviesTask(this, getActivity());
-            fetchMovies.execute();
-        }
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
-    }
-
     private List<MovieParcel> movieList = new ArrayList<MovieParcel>();
     private static final String ARG_SECTION_NUMBER = "section_number";
     private MovieAdapter mMovieListAdapter;
+    public static String sortByParam;
+    private DisplayMetrics mDisplayMetrics = new DisplayMetrics();
+    public  RecyclerView recyclerView;
+    private boolean load=true;
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        if(savedInstanceState!=null){
+            movieList = savedInstanceState.getParcelableArrayList("movieList");
+            load = false;
+            Toast.makeText(getActivity(),"Restored the list",Toast.LENGTH_LONG).show();
+        }
+        setHasOptionsMenu(true);
+        recyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_movies,container,false);
+        recyclerView.setLayoutManager(new GridLayoutManager(recyclerView.getContext(),2));
+        if(!Search.searchRes)
+        itemSelected("Popular");
+        return recyclerView;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList("movieList", (ArrayList<? extends Parcelable>) movieList);
+        super.onSaveInstanceState(outState);
+    }
+
+
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d("ViewDestroyed", "onDestroyView: ");
+    }
+
+
+    public void itemSelected(String selectedItem) {
+           if(!load)
+               return;
+            if (selectedItem.equals("Favorites")) {
+                // Log.d("favorite","Inside favorite" );
+                FavoriteMovieDBHelper db = new FavoriteMovieDBHelper(getContext());
+                movieList.clear();
+                movieList = db.getFavoriteMovieList();
+                initUI(getContext());
+            }
+            if (selectedItem.equals("Popular")) {
+                sortByParam = "popular";
+                GetMoviesTask fetchMovies = new GetMoviesTask(this,getContext());
+                fetchMovies.execute();
+            }
+            if (selectedItem.equals("Top Rated")) {
+                sortByParam = "top_rated";
+                GetMoviesTask fetchMovies = new GetMoviesTask(this, getActivity());
+                fetchMovies.execute();
+            }
+            if (selectedItem.equals("In theatres")) {
+                sortByParam = "now_playing";
+                GetMoviesTask fetchMovies = new GetMoviesTask(this, getActivity());
+                fetchMovies.execute();
+            }
+            if (selectedItem.equals("Coming Soon")) {
+                sortByParam = "upcoming";
+                GetMoviesTask fetchMovies = new GetMoviesTask(this, getActivity());
+                fetchMovies.execute();
+            }
+
+    }
+
+
+
+
 
 
     public MoviesFragment() {
+        movieList.clear();
     }
 
     public static MoviesFragment newInstance() {
@@ -99,14 +124,6 @@ public class MoviesFragment extends Fragment implements AdapterView.OnItemSelect
         return fragment;
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        setHasOptionsMenu(true);
-        recyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_movies,container,false);
-        recyclerView.setLayoutManager(new GridLayoutManager(recyclerView.getContext(),2));
-        return recyclerView;
-    }
 
     public void addToList(MovieParcel obj){
         movieList.add(obj);
@@ -115,8 +132,8 @@ public class MoviesFragment extends Fragment implements AdapterView.OnItemSelect
         movieList.clear();
     }
 
-    public void initUI() {
-        mMovieListAdapter = new MovieAdapter(getActivity(), this, movieList);
+    public void initUI(Context context) {
+        mMovieListAdapter = new MovieAdapter(context, this, movieList);
         recyclerView.setAdapter(mMovieListAdapter);
         GetMoviesTask.dialog.dismiss();
 //        recyclerView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -198,6 +215,8 @@ public class MoviesFragment extends Fragment implements AdapterView.OnItemSelect
         // Finally show the PopupMenu
         popup.show();
     }
+
+
 
 
 }

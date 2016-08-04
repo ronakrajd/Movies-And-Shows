@@ -2,6 +2,9 @@ package com.android.ronakdoongarwal.moviesandshows;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Movie;
+import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -111,7 +114,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieParcel.ViewHolder> i
         String posterURL = movieParcel.getImagePosterURL();
         DisplayMetrics displaymetrics = new DisplayMetrics();
         ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(displaymetrics);
-        int screenWidth = displaymetrics.widthPixels;
+        int screenWidth = mActivityFragment.recyclerView.getWidth();
 
         // eventual width of each image
         int newImageWidth = (screenWidth / mActivityFragment.getNumGridViewCols());
@@ -155,12 +158,25 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieParcel.ViewHolder> i
 
     @Override
     public void onClick(View v) {
-        int position = MoviesFragment.recyclerView.getChildLayoutPosition(v);
+        int position = mActivityFragment.recyclerView.getChildLayoutPosition(v);
         MovieParcel movieParcel = movieParcelList.get(position);
-        Intent intent = new Intent(mContext,MovieDetailActivity.class);
-//        intent.putExtra("movieTitle",movieParcel.getMovieTitle());
-//        intent.putExtra("backdropURL",movieParcel.getBackdropURL());
-        intent.putExtra("movieParcel",movieParcel);
-        mContext.startActivity(intent);
+        if(MoviesActivity.mTwoPane){
+            Bundle args = new Bundle();
+            args.putParcelable("movieParcel",movieParcel);
+
+            MovieDetailActivityFragment mdFragmnent = new MovieDetailActivityFragment();
+            mdFragmnent.setArguments(args);
+
+            ((MoviesActivity) v.getContext()).getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.movie_detail_container,mdFragmnent)
+                    .commit();;
+        }
+        else {
+            Intent intent = new Intent(mContext, MovieDetailActivity.class);
+////        intent.putExtra("movieTitle",movieParcel.getMovieTitle());
+////        intent.putExtra("backdropURL",movieParcel.getBackdropURL());
+            intent.putExtra("movieParcel", movieParcel);
+            mContext.startActivity(intent);
+        }
     }
 }

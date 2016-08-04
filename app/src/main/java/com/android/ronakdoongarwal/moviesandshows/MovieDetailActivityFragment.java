@@ -1,15 +1,19 @@
 package com.android.ronakdoongarwal.moviesandshows;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -38,50 +42,120 @@ import java.util.List;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MovieDetailActivityFragment extends Fragment implements View.OnClickListener {
+public class MovieDetailActivityFragment extends Fragment {
+    private static String runTime;
+    private static ArrayList<MovieGenre> genresList = new ArrayList<>();
     public static ArrayList<String> videoPath = new ArrayList<>();
     public static ArrayList<String> videoType = new ArrayList<>();
     public static ArrayList<String> author = new ArrayList<>();
     public static List<Review> review = new ArrayList<>();
+    private static String homepage;
     View view;
     public MovieDetailActivityFragment() {
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_movie_detail, container, false);
-        MovieParcel movieParcel = getActivity().getIntent().getParcelableExtra("movieParcel");
-        ImageView imageView = (ImageView) view.findViewById(R.id.posterImage);
-        Glide.with(this)
-                .load(getResources().getString(R.string.api_base_detail_image_url) + movieParcel.getImagePosterURL())
-                .override(154, 200)
-                .into(imageView);
-        ((TextView) view.findViewById(R.id.dshow_title)).setText(movieParcel.getMovieTitle());
-        RatingBar ratingBar = (RatingBar) view.findViewById(R.id.detail_acitvity_rating_bar);
-        ratingBar.setRating((float) movieParcel.getUserRating());
-        ((TextView) view.findViewById(R.id.rating)).setText(String.valueOf(movieParcel.getUserRating()));
-        ((TextView) view.findViewById(R.id.release_date)).setText(movieParcel.getReleaseDate());
-        ((TextView) view.findViewById(R.id.overview_text)).setText(movieParcel.getOverview());
-        ((TextView) view.findViewById(R.id.vote_count)).setText(movieParcel.getVoteCount());
-        GetMovieVideos fetchVideos = new GetMovieVideos(this,movieParcel.getmMovieId());
-        fetchVideos.execute();
-        GetMovieReviews fetchReviews = new GetMovieReviews(this,movieParcel.getmMovieId());
-        fetchReviews.execute();
+        Bundle args = getArguments();
+        final MovieParcel movieParcel;
+        Search.searchRes=false;
+        if(args!=null) {
+
+            movieParcel = args.getParcelable("movieParcel");
+            GetMovieDetail fetchDetail = new GetMovieDetail(this, movieParcel.getmMovieId());
+            fetchDetail.execute();
+            GetMovieReviews fetchReviews = new GetMovieReviews(this, movieParcel.getmMovieId());
+            fetchReviews.execute();
+            ImageView imageView = (ImageView) view.findViewById(R.id.posterImage);
+            Glide.with(this)
+                    .load(getResources().getString(R.string.api_base_detail_image_url) + movieParcel.getImagePosterURL())
+                    .override(154, 200)
+                    .into(imageView);
+            ((TextView) view.findViewById(R.id.dshow_title)).setText(movieParcel.getMovieTitle());
+            RatingBar ratingBar = (RatingBar) view.findViewById(R.id.detail_acitvity_rating_bar);
+            ratingBar.setRating((float) movieParcel.getUserRating());
+            ((TextView) view.findViewById(R.id.rating)).setText(String.valueOf(movieParcel.getUserRating()));
+            ((TextView) view.findViewById(R.id.release_date)).setText(movieParcel.getReleaseDate());
+            ((TextView) view.findViewById(R.id.overview_text)).setText(movieParcel.getOverview());
+            ((TextView) view.findViewById(R.id.vote_count)).setText(movieParcel.getVoteCount());
+            ((TextView) view.findViewById(R.id.run_time)).setText(runTime);
+
+            if(view.findViewById(R.id.favorite_button)!=null){
+                Button fav = (Button) view.findViewById(R.id.favorite_button);
+                fav.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        FavoriteMovieDBHelper favoriteMovie = new FavoriteMovieDBHelper(getContext());
+                        favoriteMovie.addMovieToFavorite(movieParcel);
+                        Snackbar.make(view, "Movie added to favorites", Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                    }
+                });
+            }
+        }
         return view;
     }
 
-    @Override
-    public void onClick(View v) {
-        int position  = (int) v.getTag();
-        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v="+videoPath.get(position))));
+
+
+
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    public void updateUI(){
+        final LinearLayout genreList = (LinearLayout) view.findViewById(R.id.genreLabels);
+        for(int i=0;i<genresList.size();i++) {
+            TextView genre = new TextView(getContext());
+            genre.setTag(i);
+            genre.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position= (int) v.getTag();
+                    Intent intent = new Intent(getContext(),Search.class);
+                    intent.putExtra("searchStr","with_genres");
+                    String id = String.valueOf(genresList.get(position).getGenreId());
+                    intent.putExtra("value",id);
+                    intent.putExtra("Title","Results for "+genresList.get(position).getGenre()+" movies");
+                    startActivity(intent);
+                }
+            });
+            genre.setText(genresList.get(i).getGenre());
+            genre.setBackground(getResources().getDrawable(R.drawable.label_bg));
+            genre.setTextAppearance(getContext(),R.style.labelTextAppearance);
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                params.setMargins(0,0,15,0);
+                genre.setLayoutParams(params);
+            }
+            genreList.addView(genre);
+        }
+        Button button = (Button) view.findViewById(R.id.homepage_button);
+        if(homepage!=null&&(homepage.contains("http://")||homepage.contains("https://"))){
+
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Uri uri = Uri.parse(homepage);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(intent);
+                }
+            });
+        }
+        else{
+            button.setVisibility(View.GONE);
+        }
+
     }
 
-    public static class GetMovieVideos extends AsyncTask<Void, Void, Void> {
+    public static class GetMovieDetail extends AsyncTask<Void, Void, Void> {
         private int movieId;
         private MovieDetailActivityFragment mdFragment;
 
-        public GetMovieVideos(MovieDetailActivityFragment mfragment, int movieId) {
+
+
+        public GetMovieDetail(MovieDetailActivityFragment mfragment, int movieId) {
             this.mdFragment = mfragment;
             this.movieId = movieId;
         }
@@ -94,6 +168,7 @@ public class MovieDetailActivityFragment extends Fragment implements View.OnClic
             try {
                 videoPath.clear();
                 videoType.clear();
+                genresList.clear();
                 try {
                     Uri.Builder builder = new Uri.Builder();
                     String key = "e7684f27608b0d0d83be08309126045d";
@@ -102,8 +177,8 @@ public class MovieDetailActivityFragment extends Fragment implements View.OnClic
                             .appendPath("3")
                             .appendPath("movie")
                             .appendPath("" + movieId)
-                            .appendPath("videos")
-                            .appendQueryParameter("api_key", key);
+                            .appendQueryParameter("api_key", key)
+                            .appendQueryParameter("append_to_response","trailers,credits");
                     String strURL = builder.build().toString();
                     Log.d("url", strURL);
                     URL url = new URL(strURL);
@@ -147,12 +222,21 @@ public class MovieDetailActivityFragment extends Fragment implements View.OnClic
                 if (jsonStr == null) {
                     return null;
                 }
+
                 JSONObject json = new JSONObject(jsonStr);
-                resultArray = json.getJSONArray("results");
+                runTime  = String.format("%02d",json.getInt("runtime")/60)+" Hr "+String.format("%02d",(json.getInt("runtime")%60))+" Min";
+                homepage = json.getString("homepage");
+                resultArray = json.getJSONObject("trailers").getJSONArray("youtube");
                 for (int i = 0; i < resultArray.length(); i++) {
                     movieVideoObject = resultArray.getJSONObject(i);
-                    videoPath.add(movieVideoObject.getString("key"));
+                    videoPath.add(movieVideoObject.getString("source"));
                     videoType.add(movieVideoObject.getString("type"));
+                }
+                resultArray = json.getJSONArray("genres");
+                for (int i = 0; i < resultArray.length(); i++) {
+                    movieVideoObject = resultArray.getJSONObject(i);
+                    genresList.add(new MovieGenre(movieVideoObject.getInt("id"),movieVideoObject.getString("name")));
+
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -163,6 +247,7 @@ public class MovieDetailActivityFragment extends Fragment implements View.OnClic
         @Override
         protected void onPostExecute(Void aVoid) {
             mdFragment.populateVideos();
+            mdFragment.updateUI();
         }
     }
 
@@ -174,7 +259,13 @@ public class MovieDetailActivityFragment extends Fragment implements View.OnClic
             ((TextView)view.findViewById(R.id.video_type)).setText(videoType.get(i));
             videoListLayout.addView(view);
             view.setTag(i);
-            view.setOnClickListener(this);
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position  = (int) v.getTag();
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v="+videoPath.get(position))));
+                }
+            });
         }
     }
 

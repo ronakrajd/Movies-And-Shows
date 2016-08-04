@@ -2,10 +2,12 @@ package com.android.ronakdoongarwal.moviesandshows;
 
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.bumptech.glide.Glide;
@@ -24,10 +26,22 @@ import java.util.concurrent.ExecutionException;
 
 public class GetMoviesTask extends AsyncTask<Void, Void, Void> {
     public static ProgressDialog dialog;
-    private MoviesFragment moviesFragment= null;
-    public GetMoviesTask(MoviesFragment moviesFragment, FragmentActivity activity) {
+    private String value;
+    private  String searchStr="";
+    public static Context activity;
+    private static MoviesFragment moviesFragment= null;
+    public GetMoviesTask(MoviesFragment moviesFragment, Context activity) {
         this.moviesFragment=moviesFragment;
         dialog = new ProgressDialog(activity);
+        this.activity = activity;
+    }
+
+    public GetMoviesTask(MoviesFragment moviesFragment, Context activity,String searchStr,String value) {
+        this.moviesFragment=moviesFragment;
+        this.searchStr = searchStr;
+        dialog = new ProgressDialog(activity);
+        this.value = value;
+        this.activity = activity;
     }
 
     @Override
@@ -47,14 +61,27 @@ public class GetMoviesTask extends AsyncTask<Void, Void, Void> {
             try {
                 Uri.Builder builder = new Uri.Builder();
                 String key ="e7684f27608b0d0d83be08309126045d";
-                builder.scheme("https")
-                        .authority("api.themoviedb.org")
-                        .appendPath("3")
-                        .appendPath("movie")
-                        .appendPath(MoviesFragment.sortByParam)
-                        .appendQueryParameter("api_key", key );
+
+                if(searchStr.equals("with_genres")){
+
+                    builder.scheme("https")
+                            .authority("api.themoviedb.org")
+                            .appendPath("3")
+                            .appendPath("discover")
+                            .appendPath("movie")
+                            .appendQueryParameter("api_key", key )
+                            .appendQueryParameter(searchStr,value);
+                }
+                else {
+                    builder.scheme("https")
+                            .authority("api.themoviedb.org")
+                            .appendPath("3")
+                            .appendPath("movie")
+                            .appendPath(MoviesFragment.sortByParam)
+                            .appendQueryParameter("api_key", key);
+                }
                 String strURL = builder.build().toString();
-                Log.d("url",strURL);
+                Log.d("genreurl",strURL);
                 URL url = new URL(strURL);
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
@@ -134,13 +161,15 @@ public class GetMoviesTask extends AsyncTask<Void, Void, Void> {
                     if((posterURL1 != null) && (!posterURL1.isEmpty()) && (!posterURL1.equals("null"))) {
                         // load an image to retrieve the dimensions
                         try {
-                            image = Glide
-                                    .with(moviesFragment.getActivity())
-                                    .load(moviesFragment.getString(R.string.api_base_image_url) + moviesFragment.getPosterURL(i))
-                                    .asBitmap()
-                                    .into(-1,-1)
-                                    .get();
-                            moviesFragment.setImageDimensions(image.getWidth(), image.getHeight());
+                            if(moviesFragment.isAdded()) {
+                                image = Glide
+                                        .with(moviesFragment.getActivity())
+                                        .load(moviesFragment.getString(R.string.api_base_image_url) + moviesFragment.getPosterURL(i))
+                                        .asBitmap()
+                                        .into(-1, -1)
+                                        .get();
+                                moviesFragment.setImageDimensions(image.getWidth(), image.getHeight());
+                            }
                             break;
                         } catch (InterruptedException e) {
                             e.printStackTrace();
@@ -160,6 +189,6 @@ public class GetMoviesTask extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
 
-        moviesFragment.initUI();
+        moviesFragment.initUI(activity);
     }
 }

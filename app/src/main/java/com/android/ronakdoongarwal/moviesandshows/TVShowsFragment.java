@@ -23,40 +23,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class TVShowsFragment extends Fragment implements AdapterView.OnItemSelectedListener {
+public class TVShowsFragment extends Fragment  {
 
     protected static Spinner s=null;
     private int mImageWidth;
     private int mImageHeight;
     public static RecyclerView recyclerView;
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
-        inflater.inflate(R.menu.sort_menu, menu); // inflate the menu
-        s = (Spinner) menu.findItem(R.id.sort_menu_spinner).getActionView();     // find the spinner
 
-        SpinnerAdapter mSpinnerAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.sort_menu_spinner_list2, android.R.layout.simple_spinner_dropdown_item);    // create the adapter from a StringArray
-
-        s.setAdapter(mSpinnerAdapter);   // set the adapter
-        s.setOnItemSelectedListener(this);    // (optional) reference to a OnItemSelectedListener, that you can use to perform actions based on user selection
-        super.onCreateOptionsMenu(menu,inflater);
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        if(parent.getItemAtPosition(position).toString().equals("Favorite")){
+    public void itemSelected(String selectedItem) {
+        if(selectedItem.toString().equals("Favorite")){
             FavoriteShowDBHelper db = new FavoriteShowDBHelper(getContext());
             showList.clear();;
             showList = db.getFavoriteShowList();
             initUI();
         }
-        if(parent.getItemAtPosition(position).toString().equals("Popular")){
+        if(selectedItem.toString().equals("Popular")){
             MoviesFragment.sortByParam="popular";
             GetShowsTask fetchShows = new GetShowsTask(this, getActivity());
             fetchShows.execute();
         }
-        if(parent.getItemAtPosition(position).toString().equals("Top Rated")){
+        if(selectedItem.equals("Top Rated")){
             MoviesFragment.sortByParam="top_rated";
             GetShowsTask fetchShows = new GetShowsTask(this, getActivity());
             fetchShows.execute();
@@ -64,10 +52,6 @@ public class TVShowsFragment extends Fragment implements AdapterView.OnItemSelec
 
     }
 
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
-    }
 
     private static List<TVShowParcel> showList = new ArrayList<TVShowParcel>();
     private static final String ARG_SECTION_NUMBER = "section_number";
@@ -87,6 +71,7 @@ public class TVShowsFragment extends Fragment implements AdapterView.OnItemSelec
         setHasOptionsMenu(true);
         recyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_tvshows,container,false);
         recyclerView.setLayoutManager(new GridLayoutManager(recyclerView.getContext(),2));
+        itemSelected("Popular");
         return recyclerView;
     }
     public void addToList(TVShowParcel obj){

@@ -19,10 +19,21 @@ public class MovieDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
+        if(savedInstanceState==null){
+            Bundle args = new Bundle();
+            args.putParcelable("movieParcel",getIntent().getParcelableExtra("movieParcel"));
+            MovieDetailActivityFragment fragment = new MovieDetailActivityFragment();
+            fragment.setArguments(args);
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.movie_detail_container,fragment)
+                    .commit();
+        }
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //enabling the back to parent arrow in the action bar
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setSubtitle("Movie Tagline Here");
 
         final MovieParcel movieParcel = getIntent().getParcelableExtra("movieParcel");
         //loading the backdrop poster in the imageview inside collasping toolbar
@@ -46,5 +57,4 @@ public class MovieDetailActivity extends AppCompatActivity {
             }
         });
     }
-
 }

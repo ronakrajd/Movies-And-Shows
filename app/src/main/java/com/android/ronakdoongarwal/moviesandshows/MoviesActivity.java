@@ -1,7 +1,13 @@
 package com.android.ronakdoongarwal.moviesandshows;
 
 import android.app.Activity;
+import android.app.TabActivity;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -13,31 +19,82 @@ import android.os.Bundle;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TabHost;
 
-public class MoviesActivity extends AppCompatActivity {
+public class MoviesActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     public static Activity mcontext;
     private ViewPager mViewPager;
+    public static boolean mTwoPane;
+    private MoviesFragment mFragmentInstance;
+    private TVShowsFragment sFragmentInstance;
+    private ActionBar actionBar;
+    private String curmcriteria="Popular";
+    private String curscriteria="Popular";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movies);
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        actionBar = getSupportActionBar();
+        if(findViewById(R.id.movie_detail_container)!=null){
+            mTwoPane = true;
+            if(savedInstanceState ==null){
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.movie_detail_container,new MovieDetailActivityFragment())
+                        .commit();
+            }
+        }
+        else{
+            mTwoPane=false;
 
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
+            // Create the adapter that will return a fragment for each of the three
+            // primary sections of the activity.
+            mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
+            // Set up the ViewPager with the sections adapter.
+            mViewPager = (ViewPager) findViewById(R.id.container);
+            mViewPager.setAdapter(mSectionsPagerAdapter);
+
+            TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+            tabLayout.setupWithViewPager(mViewPager);
+
+
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                    this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+            drawer.setDrawerListener(toggle);
+            toggle.syncState();
+            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+            navigationView.setNavigationItemSelectedListener(this);
+            navigationView.setCheckedItem(R.id.nav_popular);
+            actionBar.setSubtitle("Popular Movies");
+            mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                    if(position==0){
+                        actionBar.setSubtitle(curmcriteria+" Movies");
+                    }
+                    if(position==1){
+                        actionBar.setSubtitle(curscriteria+" Shows");
+                    }
+                }
+
+                @Override
+                public void onPageSelected(int position) {
+
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+
+                }
+            });
+        }
 
 
     }
@@ -65,6 +122,24 @@ public class MoviesActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        if(item.getGroupId()==R.id.sort_movies) {
+            curmcriteria = item.getTitle().toString();
+            mFragmentInstance.itemSelected(item.getTitle().toString());
+            actionBar.setSubtitle(item.getTitle().toString()+" Movies");
+            mViewPager.setCurrentItem(0);
+        }
+        if(item.getGroupId()==R.id.sort_shows) {
+            curscriteria = item.getTitle().toString();
+            sFragmentInstance.itemSelected(item.getTitle().toString());
+            actionBar.setSubtitle(item.getTitle().toString()+" Shows");
+            mViewPager.setCurrentItem(1);
+        }
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
 
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
@@ -76,9 +151,12 @@ public class MoviesActivity extends AppCompatActivity {
         @Override
         public Fragment getItem(int position) {
            switch (position){
-               case 0: return MoviesFragment.newInstance();
+               case 0: mFragmentInstance = MoviesFragment.newInstance();
 
-               case 1: return TVShowsFragment.newInstance();
+                   return mFragmentInstance ;
+
+               case 1: sFragmentInstance = TVShowsFragment.newInstance();
+                        return sFragmentInstance;
 
            }
             return MoviesFragment.newInstance();

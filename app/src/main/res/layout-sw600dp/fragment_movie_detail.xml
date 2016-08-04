@@ -132,42 +132,88 @@
                                 android:id="@+id/textView10" />
                         </LinearLayout>
 
-                        <TextView
-                            android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textAppearance="?android:attr/textAppearanceMedium"
-                            android:id="@+id/run_time"
-                            android:layout_marginTop="5dp"
-                            android:textSize="20sp" />
+                            android:layout_marginTop="5dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceMedium"
+                                android:text="00"
+                                android:id="@+id/textView11" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceMedium"
+                                android:text=" Hr "
+                                android:id="@+id/textView12" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceMedium"
+                                android:text="00"
+                                android:id="@+id/textView13" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceMedium"
+                                android:text=" Min"
+                                android:id="@+id/textView14" />
+                        </LinearLayout>
 
                     </LinearLayout>
                 </LinearLayout>
-                <HorizontalScrollView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:scrollbars="none"
-                    android:layout_marginBottom="10dp">
+
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="3dp"
                     android:layout_marginLeft="16dp"
-                    android:layout_marginRight="8dp"
-                    android:id="@+id/genreLabels">
+                    android:layout_marginRight="8dp">
 
-
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Here All Genere&apos;s Label will be shown"
+                        android:id="@+id/textView4" />
                 </LinearLayout>
-                </HorizontalScrollView>
-                <Button
+
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="VISIT WEBSITE"
-                    android:id="@+id/homepage_button"
-                    android:background="#03a9f4"
-                    android:layout_margin="16dp"
-                    android:textColor="#ffffff"
-                    android:layout_marginTop="0dp" />
+                    android:layout_height="match_parent">
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="VISIT WEBSITE"
+                        android:id="@+id/button"
+                        android:background="#ffffff"
+                        android:layout_margin="16dp"
+                        android:textColor="#673AB7"
+                        android:elevation="0dp"
+                        style="?android:attr/borderlessButtonStyle" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Mark Fovorite"
+                        android:id="@+id/favorite_button"
+                        android:layout_margin="16dp"
+                        android:background="#ffffff"
+                        android:textColor="#FF9800"
+                        android:elevation="0dp"
+                        style="?android:attr/borderlessButtonStyle" />
+                </LinearLayout>
+
             </LinearLayout>
         </android.support.v7.widget.CardView>
         <android.support.v7.widget.CardView
@@ -236,7 +282,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                     android:paddingLeft="5dp"
-                    android:scrollbars="none"
                     android:layout_marginBottom="8dp">
             <LinearLayout
                 android:orientation="horizontal"

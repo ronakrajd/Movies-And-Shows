@@ -7,5 +7,11 @@
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never" />
-
+    <item
+        android:id="@+id/action_search"
+        android:orderInCategory="1000"
+        android:title="@string/action_search"
+        app:showAsAction="always"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        android:icon="@drawable/icon_search"/>
 </menu>
